@@ -25,7 +25,7 @@ namespace Ris
 
 		// Limits angle to be between 0 to 360
 		// Just 'float' version as numbers are low.
-		inline static float limitAngle_360(float x)
+		inline static float limitDegrees_360(float x)
 		{
 			x = fmod(x, 360.0f);
 			if (x < 0.0f)
@@ -35,7 +35,7 @@ namespace Ris
 
 		// Limits angle to be between -180 to 180
 		// Just 'float' version as numbers are low.
-		inline static float limitAngle_180(float x)
+		inline static float limitDegrees_180(float x)
 		{
 			x = fmod(x + 180.0f, 360.0f);
 			if (x < 0.0f)
@@ -44,8 +44,8 @@ namespace Ris
 		}
 
 		template <typename T>
-		inline static T radian(T x, T y) { return atan2(x, y); }
-		inline static float radian(int x, int y) { return (float)atan2((float)x, (float)y); }
+		inline static T radians(T x, T y) { return atan2(x, y); }
+		inline static float radians(int x, int y) { return (float)atan2((float)x, (float)y); }
 
 		inline static float toDegrees(float radians) { return radians*(180.0f / (float)M_PI); }
 		inline static long double toDegrees(long double radians) { return radians*(180.0l / M_PI); }
@@ -54,11 +54,11 @@ namespace Ris
 		inline static long double toRadians(long double degrees) { return degrees * M_PI / 180.0l; }
 
 		template <typename T>
-		inline static T angle(T x, T y) { return Math::toDegrees(radian(x, y)); }
+		inline static T degrees(T x, T y) { return Math::toDegrees(radians(x, y)); }
 		template <typename T>
-		inline static T angle180(T x, T y) { return Math::limitAngle_180(angle(x, y)); }
+		inline static T degrees180(T x, T y) { return Math::limitDegrees_180(degrees(x, y)); }
 		template <typename T>
-		inline static T angle360(T x, T y) { return Math::limitAngle_360(angle(x, y)); }
+		inline static T degrees360(T x, T y) { return Math::limitDegrees_360(degrees(x, y)); }
 	};
 };
 #endif

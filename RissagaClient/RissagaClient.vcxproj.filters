@@ -16,6 +16,15 @@
     <ClInclude Include="source\Utils\Math.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="source\Utils\String.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Utils\Rect.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Utils\Size.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">
