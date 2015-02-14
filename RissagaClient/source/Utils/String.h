@@ -22,7 +22,7 @@ namespace Ris
 			return *this;
 		}
 		template <typename T>
-		String &fromNumber(T n)
+		String &fromNumber(const T n)
 		{
 			(*this) = std::to_string(n);
 			return (*this);

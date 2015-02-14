@@ -23,8 +23,11 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="source\resources\Fonts.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\resources\fonts.h" />
+    <ClInclude Include="source\Utils\logging.h" />
     <ClInclude Include="source\Utils\Math.h" />
     <ClInclude Include="source\Utils\Point.h" />
     <ClInclude Include="source\Utils\Rect.h" />

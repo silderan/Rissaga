@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Math.h"
+#include "SDL_rect.h"
 
 namespace Ris
 {
@@ -238,8 +239,16 @@ namespace Ris
 			y = (T)(atof(sy.c_str()));
 		}
 
-		// static function: create point from angle
-*/
+		*/
+		SDL_Rect toSDL_Rect() const
+		{
+			SDL_Rect r;
+			r.x = (int)round(x);
+			r.y = (int)round(y);
+			r.w = (int)round(w);
+			r.h = (int)round(h);
+			return r;
+		}
 	};
 	typedef _2DPoint<float> Pointf2D;
 	typedef _2DPoint<int> Pointi2D;

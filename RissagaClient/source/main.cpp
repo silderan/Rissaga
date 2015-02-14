@@ -29,8 +29,10 @@ int main(int argc, char *argv[])
 	s.fromNumber(11.0f);
 	return s.length();
 */
-	Rect r(1, 2, 3, 4);
+	Rect r(9, 9, 3, 4);
 	Sizei i(10, 10);
 	Rect rr(Pointi2D(10,10), i);
+	if (rr.intersects(r))
+		r = rr.intersect(r);
 	return r.x;
 }

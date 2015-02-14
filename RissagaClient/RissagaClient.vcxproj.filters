@@ -8,6 +8,9 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{9605f14f-62d1-44e3-b4c6-c7425b0a195a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{3668d04f-a3c5-4e45-ad64-06091a499b3e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Utils\Point.h">
@@ -25,10 +28,19 @@
     <ClInclude Include="source\Utils\Size.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="source\resources\fonts.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Utils\logging.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\resources\Fonts.cpp">
+      <Filter>Resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
