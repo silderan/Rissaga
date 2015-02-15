@@ -12,136 +12,193 @@
 namespace Ris
 {
 	/**
-	 * A class that encapsulates a 2D point.
+	 * A class for a 2D point.
 	 */
-	template <typename T>
-	class _2DPoint
+	class Point2D
 	{
 	public:
-		T x;
-		T y;
+		float x;
+		float y;
+		bool updateSDLPoint;
+		SDL_Point m_point;
 
-		// ctor
-		inline _2DPoint<T>(T X, T Y) : x(X), y(Y)
-		{}
-		inline _2DPoint<T>() : x(0), y(0)
-		{}
+		inline Point2D(float X, float Y) : x(X), y(Y), updateSDLPoint(true)
+		{ }
+		inline Point2D(int X, int Y) : x((float)X), y((float)Y), updateSDLPoint(false)
+		{
+			m_point.x = X;
+			m_point.y = Y;
+		}
+		inline Point2D() : x(0), y(0), updateSDLPoint(true)
+		{ }
+		inline Point2D(const Point2D &p) : x(p.x), y(p.y), updateSDLPoint(true)
+		{ }
+		inline Point2D(const SDL_Rect &r) : x((float)r.x), y((float)r.y), updateSDLPoint(false)
+		{
+			m_point.x = r.x;
+			m_point.y = r.y;
+		}
+		inline Point2D(const SDL_Point &p) : x((float)p.x), y((float)p.y), updateSDLPoint(false)
+		{
+			m_point.x = p.x;
+			m_point.y = p.y;
+		}
 
-		// operators with another point
-		inline _2DPoint<T>& operator+=(const _2DPoint<T>& other) { x += other.x; y += other.y; return *this; }
-		inline _2DPoint<T>& operator-=(const _2DPoint<T>& other) { x -= other.x; y -= other.y; return *this; }
-		inline _2DPoint<T>& operator*=(const _2DPoint<T>& other) { x *= other.x; y *= other.y; return *this; }
-		inline _2DPoint<T>& operator/=(const _2DPoint<T>& other) { x /= other.x; y /= other.y; return *this; }
-		inline _2DPoint<T>& operator%=(const _2DPoint<T>& other) { x = (T)((int)x % (int)other.x); y = (T)((int)y % (int)other.y); return *this; }
-		inline _2DPoint<T> operator*(const _2DPoint<T>& other) const { return _2DPoint<T>(x * other.x, y * other.y); }
-		inline _2DPoint<T> operator/(const _2DPoint<T>& other) const { return _2DPoint<T>(x / other.x, y / other.y); }
-		inline _2DPoint<T> operator+(const _2DPoint<T>& other) const { return _2DPoint<T>(x + other.x, y + other.y); }
-		inline _2DPoint<T> operator-(const _2DPoint<T>& other) const { return _2DPoint<T>(x - other.x, y - other.y); }
-		inline _2DPoint<T> operator%(const _2DPoint<T>& other) const { return _2DPoint<T>((T)((int)x % (int)other.x), (T)((int)y % (int)other.y)); }
+		inline float getX() const { return x; }
+		inline float getY() const { return y; }
+		inline Point2D &set(float X, float Y)
+		{
+			updateSDLPoint = true;
+			x = X;
+			y = Y;
+			return *this;
+		}
+		inline Point2D &set(int X, int Y)
+		{
+			updateSDLPoint = false;
+			x = (float)(m_point.x = X);
+			y = (float)(m_point.y = Y);
+			return *this;
+		}
+		inline Point2D &set(const SDL_Point &p) { return set(p.x, p.y); }
+		inline Point2D &set(const SDL_Rect &r) { return set(r.x, r.y); }
+		template <typename T>
+		inline float setX(const T &v) { updateSDLPoint = true; return x = (float)v; }
+		template <typename T>
+		inline float setY(const T &v) { updateSDLPoint = true; return y = (float)v; }
+		template <typename T>
+		inline float adjustX(const T &v) { updateSDLPoint = true; return x += (float)v; }
+		template <typename T>
+		inline float adjustY(const T &v) { updateSDLPoint = true; return y += (float)v; }
+
+		// operators with a point
+		inline Point2D &operator+=(const Point2D &p) { updateSDLPoint = true; x += p.x; y += p.y; return *this; }
+		inline Point2D &operator-=(const Point2D &p) { updateSDLPoint = true; x -= p.x; y -= p.y; return *this; }
+		inline Point2D &operator*=(const Point2D &p) { updateSDLPoint = true; x *= p.x; y *= p.y; return *this; }
+		inline Point2D &operator/=(const Point2D &p) { updateSDLPoint = true; x /= p.x; y /= p.y; return *this; }
+		inline Point2D &operator%=(const Point2D &p) { updateSDLPoint = true; x = (float)((int)x % (int)p.x); y = (float)((int)y % (int)p.y); return *this; }
+		inline Point2D operator*(const Point2D &p) const { return Point2D(x * p.x, y * p.y); }
+		inline Point2D operator/(const Point2D &p) const { return Point2D(x / p.x, y / p.y); }
+		inline Point2D operator+(const Point2D &p) const { return Point2D(x + p.x, y + p.y); }
+		inline Point2D operator-(const Point2D &p) const { return Point2D(x - p.x, y - p.y); }
+		inline Point2D operator%(const Point2D &p) const { return Point2D((float)((int)x % (int)p.x), (float)((int)y % (int)p.y)); }
 
 		// operators with scalars
-		inline _2DPoint<T> operator-() const { return _2DPoint<T>(-x, -y); }
-		inline _2DPoint<T>& operator+=(const T& scalar) { x += scalar; y += scalar; return *this; }
-		inline _2DPoint<T>& operator-=(const T& scalar) { x -= scalar; y -= scalar; return *this; }
-		inline _2DPoint<T>& operator*=(const T& scalar) { x *= scalar; y *= scalar; return *this; }
-		inline _2DPoint<T>& operator/=(const T& scalar) { x /= scalar; y /= scalar; return *this; }
-		inline _2DPoint<T>& operator%=(const T& scalar) { x = (T)((int)x % (int)scalar); y = (T)((int)y % (int)scalar); return *this; }
-		inline _2DPoint<T> operator*(const T& scalar) const { return _2DPoint<T(x * scalar, y * scalar); }
-		inline _2DPoint<T> operator/(const T& scalar) const { return _2DPoint<T>(x / scalar, y / scalar); }
-		inline _2DPoint<T> operator+(const T& scalar) const { return _2DPoint<T>(x + scalar, y + scalar); }
-		inline _2DPoint<T> operator-(const T& scalar) const { return _2DPoint<T>(x - scalar, y - scalar); }
-		inline _2DPoint<T> operator%(const T& scalar) const { return _2DPoint<T>((T)((int)x % (int)scalar), (T)((int)y % (int)scalar)); }
+		inline Point2D operator-() const { return Point2D(-x, -y); }
 
-		inline bool operator==(const _2DPoint<T>& other) const { return (x == other.x && y == other.y); }
-		inline bool operator!=(const _2DPoint<T> &other) const { return !(*this == other); }
+		template <typename T>
+		inline Point2D &operator+=(const T& scalar) { updateSDLPoint = true; x += scalar; y += scalar; return *this; }
+		template <typename T>
+		inline Point2D &operator-=(const T& scalar) { updateSDLPoint = true; x -= scalar; y -= scalar; return *this; }
+		template <typename T>
+		inline Point2D &operator*=(const T& scalar) { updateSDLPoint = true; x *= scalar; y *= scalar; return *this; }
+		template <typename T>
+		inline Point2D &operator/=(const T& scalar) { updateSDLPoint = true; x /= scalar; y /= scalar; return *this; }
+		template <typename T>
+		inline Point2D &operator%=(const T& scalar) { updateSDLPoint = true; x = (T)((int)x % (int)scalar); y = (T)((int)y % (int)scalar); return *this; }
+		template <typename T>
+		inline Point2D operator*(const T& scalar) const { return _2DPoint<T(x * scalar, y * scalar); }
+		template <typename T>
+		inline Point2D operator/(const T& scalar) const { return Point2D(x / scalar, y / scalar); }
+		template <typename T>
+		inline Point2D operator+(const T& scalar) const { return Point2D(x + scalar, y + scalar); }
+		template <typename T>
+		inline Point2D operator-(const T& scalar) const { return Point2D(x - scalar, y - scalar); }
+		template <typename T>
+		inline Point2D operator%(const T& scalar) const { return Point2D((T)((int)x % (int)scalar), (T)((int)y % (int)scalar)); }
 
-		// casting
-		inline operator _2DPoint<float>() const	 { return _2DPoint<float>((float)x, (float)y); }
-		inline operator _2DPoint<int>()	const	 { return _2DPoint<int>((int)x, (int)y); }
-
-		inline void set(T X, T Y) { x = X; y = Y; }
+		inline bool operator==(const Point2D& p) const { return (x == p.x && y == p.y); }
+		inline bool operator!=(const Point2D &p) const { return !(*this == p); }
 
 		inline float getRadians() const { return (float)Math::radians(x, y); }
 		inline float getDegrees() const { return (float)Math::degrees(x, y); }
 		inline float getDegrees180() const { return (float)Math::degrees180(x, y); }
 		inline float getDegrees360() const { return (float)Math::degrees360(x, y); }
 
-		inline _2DPoint<T>& limitX(T min, T max)
+		template <typename T>
+		inline Point2D& limitX(T min, T max)
 		{
+			updateSDLPoint = true;
 			x = Math::limit(min, max, x);
 			return (*this);
 		}
-		inline _2DPoint<T>& limitY(T min, T max)
+		template <typename T>
+		inline Point2D& limitY(T min, T max)
 		{
+			updateSDLPoint = true;
 			y = Math::limit(min, max, y);
 			return (*this);
 		}
-		inline _2DPoint<T>& limit(T min, T max)
+		template <typename T>
+		inline Point2D& limit(T min, T max)
 		{
 			limitX(min, max);
 			limitY(min, max);
 			return (*this);
 		}
-		inline _2DPoint<T>& limit(T min, T max) const
+		template <typename T>
+		inline Point2D& limit(T min, T max) const
 		{
-			_2DPoint<T> ret = *this;
+			Point2D ret = *this;
 			return ret.limit(min, max);
 		}
-		inline _2DPoint<T>& limit(const _2DPoint<T>& min, const _2DPoint<T>& max)
+		inline Point2D& limit(const Point2D& min, const Point2D& max)
 		{
+			updateSDLPoint = true;
 			limitX(min.x, max.x);
 			limitY(min.y, max.y);
 			return (*this);
 		}
-		inline _2DPoint<T>& limit(const _2DPoint<T>& min, const _2DPoint<T>& max) const
+		inline Point2D& limit(const Point2D& min, const Point2D& max) const
 		{
-			_2DPoint<T> ret = *this;
+			Point2D ret = *this;
 			return ret.limit(min, max);
 		}
-		// return distance from other point
-		inline float getDistance(const _2DPoint<T>& other) const
+		// return distance from p point
+		inline float getDistance(const Point2D& p) const
 		{
-			return sqrt((float)(Math::pow2(x - other.x) + Math::pow2(y - other.y)));
+			return sqrt((float)(Math::pow2(x - p.x) + Math::pow2(y - p.y)));
 		}
-		inline _2DPoint<T> &fromRadians(float radians, float length = 1.0)
+		inline Point2D &fromRadians(float radians, float length = 1.0)
 		{
-			x = (T)(cos(radians) * length);
-			y = (T)(sin(radians) * length);
+			updateSDLPoint = true;
+			x = (float)(cos(radians) * length);
+			y = (float)(sin(radians) * length);
 			return *this;
 		}
-		inline _2DPoint<T> &fromDegrees(float angle, float length = 1.0)
+		inline Point2D &fromDegrees(float angle, float length = 1.0)
 		{
 			return fromRadians(Math::toRadians(angle), length);
 		}
-		inline T getLength()
+		inline float getLength() const
 		{
 			return sqrt(Math::pow2(x) + Math::pow2(y));
 		}
-		inline _2DPoint<T>& rotateDegrees(float degrees)
+		inline Point2D& rotateDegrees(float degrees)
 		{
 			return fromDegrees(getDegrees() + degrees, getLength());
 		}
-		inline _2DPoint<T>& rotateRadians(float radians)
+		inline Point2D& rotateRadians(float radians)
 		{
 			return fromDegrees(getRadians() + radians, getLength());
 		}
 		/*
 		// return normalized point
-		inline _2DPoint<T> get_normalized() const
+		inline Point2D get_normalized() const
 		{
 			T div = std::abs(x) + std::abs(y);
-			if (div == 0) return _2DPoint<T>::ZERO;
-			return _2DPoint<T>(x / div, y / div);
+			if (div == 0) return Point2D::ZERO;
+			return Point2D(x / div, y / div);
 		}
 
 		// return absolute values
-		inline _2DPoint<T> get_abs() const
+		inline Point2D get_abs() const
 		{
-			return _2DPoint<T>(std::abs(x), std::abs(y));
+			return Point2D(std::abs(x), std::abs(y));
 		}
 
 		// turn to absolute value
-		inline _2DPoint<T>& abs()
+		inline Point2D& abs()
 		{
 			x = std::abs(x);
 			y = std::abs(y);
@@ -149,7 +206,7 @@ namespace Ris
 		}
 
 		// normalize this point
-		inline _2DPoint<T>& normalize()
+		inline Point2D& normalize()
 		{
 			T div = std::abs(x) + std::abs(y);
 			if (div == 0) return (*this);
@@ -165,62 +222,62 @@ namespace Ris
 		}
 
 		// return a rotated version of this vector
-		inline _2DPoint<T> get_rotated(float angle) const
+		inline Point2D get_rotated(float angle) const
 		{
-			return _2DPoint<T>::from_angle(this->get_angle() + angle, this->get_length());
+			return Point2D::from_angle(this->get_angle() + angle, this->get_length());
 		}
 
 		// rotate this vector
-		inline _2DPoint<T>& rotate(float angle)
+		inline Point2D& rotate(float angle)
 		{
-			(*this) = _2DPoint<T>::from_angle(this->get_angle() + angle, this->get_length());
+			(*this) = Point2D::from_angle(this->get_angle() + angle, this->get_length());
 			return (*this);
 		}
 
 
 		// floor the values of this point
-		inline _2DPoint<T>& floor()
+		inline Point2D& floor()
 		{
 			this->x = (T)std::floor((float)this->x);
 			this->y = (T)std::floor((float)this->y);
 			return (*this);
 		}
-		inline _2DPoint<T> get_floor() const
+		inline Point2D get_floor() const
 		{
-			return _2DPoint<T>((*this)).floor();
+			return Point2D((*this)).floor();
 		}
 
 		// ceil the values of this point
-		inline _2DPoint<T>& ceil()
+		inline Point2D& ceil()
 		{
 			this->x = (T)std::ceil((float)this->x);
 			this->y = (T)std::ceil((float)this->y);
 			return (*this);
 		}
-		inline _2DPoint<T> get_ceil() const
+		inline Point2D get_ceil() const
 		{
-			return _2DPoint<T>((*this)).ceil();
+			return Point2D((*this)).ceil();
 		}
 
 		// limit the number of digits after the decimal point
 		// for example, if the point is (x=2.5232, y=0.2511244) and you call .get_round_by(2),
 		// the return value will be this point: (x=2.52, y=0.25).
 		// Note: obviously useable only for Ts with floating point (float, double...)
-		inline _2DPoint<T> get_round_by(int num_of_zeroes_after_dot = 2) const
+		inline Point2D get_round_by(int num_of_zeroes_after_dot = 2) const
 		{
 			int factor = (int)pow((double)10.0, num_of_zeroes_after_dot);
-			return ((_2DPoint<T>((*this) * (T)factor).floor()) / (T)factor);
+			return ((Point2D((*this) * (T)factor).floor()) / (T)factor);
 		}
-		inline _2DPoint<T>& round_by(int num_of_zeroes_after_dot = 2)
+		inline Point2D& round_by(int num_of_zeroes_after_dot = 2)
 		{
 			*this = this->get_round_by(num_of_zeroes_after_dot);
 			return (*this);
 		}
 
 		// const useful points
-		static _2DPoint<T> ZERO;
-		static _2DPoint<T> ONE;
-		static _2DPoint<T> HALF;
+		static Point2D ZERO;
+		static Point2D ONE;
+		static Point2D HALF;
 
 		// serialize the point into representable string
 		String serialize() const
@@ -240,17 +297,15 @@ namespace Ris
 		}
 
 		*/
-		SDL_Rect toSDL_Rect() const
+		const SDL_Point &getSDLRect()
 		{
-			SDL_Rect r;
-			r.x = (int)round(x);
-			r.y = (int)round(y);
-			r.w = (int)round(w);
-			r.h = (int)round(h);
-			return r;
+			if (updateSDLPoint)
+			{
+				m_point.x = (int)round(x);
+				m_point.y = (int)round(y);
+				updateSDLPoint = false;
+			}
+			return m_point;
 		}
 	};
-	typedef _2DPoint<float> Pointf2D;
-	typedef _2DPoint<int> Pointi2D;
-	typedef _2DPoint<unsigned char> Pointb2D;
 };

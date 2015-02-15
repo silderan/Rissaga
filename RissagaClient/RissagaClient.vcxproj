@@ -23,16 +23,17 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeaderOutputFile>
     </ClCompile>
-    <ClCompile Include="source\resources\Fonts.cpp" />
+    <ClCompile Include="source\resources\fonts.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\logging.h" />
+    <ClInclude Include="..\common\string.h" />
     <ClInclude Include="source\resources\fonts.h" />
-    <ClInclude Include="source\Utils\logging.h" />
-    <ClInclude Include="source\Utils\Math.h" />
-    <ClInclude Include="source\Utils\Point.h" />
-    <ClInclude Include="source\Utils\Rect.h" />
-    <ClInclude Include="source\Utils\Size.h" />
-    <ClInclude Include="source\Utils\String.h" />
+    <ClInclude Include="source\Utils\color.h" />
+    <ClInclude Include="source\Utils\math.h" />
+    <ClInclude Include="source\Utils\point.h" />
+    <ClInclude Include="source\Utils\rect.h" />
+    <ClInclude Include="source\Utils\size.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{276E08A2-357E-44CE-9432-0C5223603491}</ProjectGuid>

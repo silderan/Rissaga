@@ -13,25 +13,28 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\Utils\Point.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Utils\Math.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Utils\String.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Utils\Rect.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Utils\Size.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="source\resources\fonts.h">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="source\Utils\logging.h">
+    <ClInclude Include="source\Utils\color.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Utils\math.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Utils\point.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Utils\rect.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Utils\size.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\logging.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\string.h">
       <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
@@ -39,7 +42,7 @@
     <ClCompile Include="source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\resources\Fonts.cpp">
+    <ClCompile Include="source\resources\fonts.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
   </ItemGroup>

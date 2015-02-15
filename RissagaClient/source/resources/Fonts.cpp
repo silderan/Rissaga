@@ -1,9 +1,10 @@
 #include "fonts.h"
-#include "../Utils/logging.h"
+#include "../../../common/string.h"
+#include "../../../common/logging.h"
 
 using namespace Ris;
 
-bool Font::load(const String fname, int size)
+bool Font::load(const String &fname, int size)
 {
 	m_font = TTF_OpenFont(fname.c_str(), size);
 	return isValid();
@@ -17,8 +18,12 @@ FontShared Fonts::getFont(String fname, int size)
 {
 	String fontID = createFontID(fname, size);
 	FontShared f = operator[](fontID);
-	if (f->isValid() || f->load(fname, size))
-		return f;
+	if (!f.get())
+	{
+		f = std::make_shared<Font>();
+		if (f->load(fname, size))
+			return f;
+	}
 	// Error, cannot be loaded :/
 	g_log.logErr("Cannot load font file " + fname);
 	erase(fontID);

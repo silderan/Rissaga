@@ -7,59 +7,86 @@
 
 namespace Ris
 {
-	class Rect : public SDL_Rect
+	class Rect
 	{
+		Point2D m_point;
+		Size m_size;
+		bool updateSDLRect;
+		SDL_Rect m_rect;
+
 	public:
-		Rect()
-		{
-			x = 0; y = 0; w = 0; h = 0;
-		}
+		Rect() : m_size(), m_point(), updateSDLRect(true)
+		{ }
 		template < typename T >
-		Rect(T xx, T yy, T ww, T hh)
-		{
-			x = (int)xx;
-			y = (int)yy;
-			w = (int)ww;
-			h = (int)hh;
-		}
+		Rect(T x, T y, T w, T h) : m_point(x, y), m_size(w, h), updateSDLRect(true)
+		{ }
 		template < typename P, typename S >
-		Rect(P &p, S &s)
+		Rect(const P &p, const S &s) : m_point(p), m_size(s), updateSDLRect(true)
+		{ }
+		Rect(const SDL_Rect &r) : m_point(r), m_size(r), updateSDLRect(false)
+		{ }
+		inline void set(float x, float y, float w, float h)
 		{
-			x = p.x;
-			y = p.y;
-
-			w = s.w;
-			h = s.h;
+			updateSDLRect = true;
+			m_point.set(x, y);
+			m_size.set(w, h);
 		}
-
-		inline bool isEmpty() const { return SDL_RectEmpty((SDL_Rect*)this) == SDL_TRUE; }
-		inline bool operator==(const Rect &other) const { return SDL_RectEquals(&other, this) == SDL_TRUE; }
-		inline bool intersects(const Rect &other) const { return SDL_HasIntersection(&other, this) == SDL_TRUE; }
-
-		inline bool intersect(const Rect &other, Rect &result) const
+		inline void set(int x, int y, int w, int h)
 		{
-			return SDL_IntersectRect(&other, this, &result) == SDL_TRUE;
+			updateSDLRect = false;
+			m_point.set(x, y);
+			m_size.set(w, h);
 		}
-		inline Rect intersect(const Rect &other) const
+		inline void set(const SDL_Rect &r)
 		{
-			Rect r;
-			// As not sure if r is changed even returning false, this ensures that rect is invalid.
-			if (!SDL_IntersectRect(&other, this, &r))
+			updateSDLRect = false;
+			m_point.set(r.x, r.y);
+			m_size.set(r.w, r.h);
+		}
+		inline const SDL_Rect &getSDLRect()
+		{
+			if (updateSDLRect)
 			{
-				r.w = r.h = 0;
+				m_rect.x = (int)round(m_point.getSDLRect().x);
+				m_rect.y = (int)round(m_point.getSDLRect().y);
+				m_rect.w = (int)round(m_size.getSDLPoint().x);
+				m_rect.h = (int)round(m_size.getSDLPoint().y);
+				updateSDLRect = false;
 			}
-			return r;
+			return m_rect;
+		}
+		inline bool isEmpty() const { return SDL_RectEmpty((SDL_Rect*)this) == SDL_TRUE; }
+		inline bool operator==(Rect &other) { return SDL_RectEquals(&other.getSDLRect(), &getSDLRect()) == SDL_TRUE; }
+		inline bool intersects(Rect &other) { return SDL_HasIntersection(&other.getSDLRect(), &getSDLRect()) == SDL_TRUE; }
+
+		inline bool intersect(Rect &other, Rect &result)
+		{
+			SDL_Rect r;
+			if (SDL_IntersectRect(&other.getSDLRect(), &getSDLRect(), &r) == SDL_TRUE)
+			{
+				result.set(r);
+				return true;
+			}
+			return false;
+		}
+		inline Rect intersect(Rect &other)
+		{
+			SDL_Rect r;
+			SDL_IntersectRect(&other.getSDLRect(), &getSDLRect(), &r);
+			return Rect(r);
 		}
 
-		inline void unionRect(const Rect &other, Rect &result)
+		inline void unionRect(Rect &other, Rect &result)
 		{
-			SDL_UnionRect(&other, this, &result);
+			SDL_Rect r;
+			SDL_UnionRect(&other.getSDLRect(), &getSDLRect(), &r);
+			result.set(r);
 		}
-		Rect unionRect(const Rect &other)
+		Rect unionRect(Rect &other)
 		{
-			Rect r;
-			SDL_UnionRect(&other, this, &r);
-			return r;
+			SDL_Rect r;
+			SDL_UnionRect(&other.getSDLRect(), &getSDLRect(), &r);
+			return Rect(r);
 		}
 		// TODO: Not wrapped... yet.
 		//SDL_EnclosePoints
