@@ -37,12 +37,18 @@
     <ClInclude Include="..\common\string.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="source\resources\textures.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\resources\fonts.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="source\resources\textures.cpp">
       <Filter>Resources</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL_pixels.h>
+#include <SDL2/include/SDL_pixels.h>
 #include "Math.h"
 
 namespace Ris

@@ -2,11 +2,11 @@
 
 #include <unordered_map>
 #include <memory>
-#include <SDL_ttf.h>
+#include <SDL2/include/SDL_ttf.h>
 
-#include "../../../common/String.h"
-#include "../../../common/logging.h"
-#include "../Utils/Size.h"
+#include "common/string.h"
+#include "common/logging.h"
+#include "../utils/Size.h"
 
 namespace Ris
 {
@@ -109,7 +109,7 @@ namespace Ris
 	public:
 		Fonts()
 		{
-			if (!TTF_Init())
+			if (TTF_Init() == -1)
 				g_log.logErr("Cannot initialize fonts: " + String(TTF_GetError()));
 		}
 		~Fonts()
@@ -119,7 +119,7 @@ namespace Ris
 
 		static String createFontID(const String &fname, int size);
 		// Fonts are identified by filename and size.
-		FontShared getFont(String fname, int size);
+		FontShared getFont(const String &fname, int size);
 	};
 	static Fonts g_Fonts;
 }

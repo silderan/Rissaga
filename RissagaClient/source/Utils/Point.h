@@ -7,7 +7,7 @@
 #pragma once
 
 #include "Math.h"
-#include "SDL_rect.h"
+#include <SDL2/include/SDL_rect.h>
 
 namespace Ris
 {
@@ -19,64 +19,48 @@ namespace Ris
 	public:
 		float x;
 		float y;
-		bool updateSDLPoint;
 		SDL_Point m_point;
 
-		inline Point2D(float X, float Y) : x(X), y(Y), updateSDLPoint(true)
+		inline Point2D(float X, float Y) : x(X), y(Y)
 		{ }
-		inline Point2D(int X, int Y) : x((float)X), y((float)Y), updateSDLPoint(false)
-		{
-			m_point.x = X;
-			m_point.y = Y;
-		}
-		inline Point2D() : x(0), y(0), updateSDLPoint(true)
+		inline Point2D(int X, int Y) : x((float)X), y((float)Y)
 		{ }
-		inline Point2D(const Point2D &p) : x(p.x), y(p.y), updateSDLPoint(true)
+		inline Point2D() : x(0), y(0)
 		{ }
-		inline Point2D(const SDL_Rect &r) : x((float)r.x), y((float)r.y), updateSDLPoint(false)
-		{
-			m_point.x = r.x;
-			m_point.y = r.y;
-		}
-		inline Point2D(const SDL_Point &p) : x((float)p.x), y((float)p.y), updateSDLPoint(false)
-		{
-			m_point.x = p.x;
-			m_point.y = p.y;
-		}
+		inline Point2D(const Point2D &p) : x(p.x), y(p.y)
+		{ }
+		inline Point2D(const SDL_Rect &r) : x((float)r.x), y((float)r.y)
+		{ }
+		inline Point2D(const SDL_Point &p) : x((float)p.x), y((float)p.y)
+		{ }
 
 		inline float getX() const { return x; }
 		inline float getY() const { return y; }
-		inline Point2D &set(float X, float Y)
+		template <typename T>
+		inline Point2D &set(const T &X, const T &Y)
 		{
-			updateSDLPoint = true;
-			x = X;
-			y = Y;
-			return *this;
-		}
-		inline Point2D &set(int X, int Y)
-		{
-			updateSDLPoint = false;
-			x = (float)(m_point.x = X);
-			y = (float)(m_point.y = Y);
+			x = (float)X;
+			y = (float)Y;
 			return *this;
 		}
 		inline Point2D &set(const SDL_Point &p) { return set(p.x, p.y); }
 		inline Point2D &set(const SDL_Rect &r) { return set(r.x, r.y); }
+
 		template <typename T>
-		inline float setX(const T &v) { updateSDLPoint = true; return x = (float)v; }
+		inline float setX(const T &v) { return x = (float)v; }
 		template <typename T>
-		inline float setY(const T &v) { updateSDLPoint = true; return y = (float)v; }
+		inline float setY(const T &v) { return y = (float)v; }
 		template <typename T>
-		inline float adjustX(const T &v) { updateSDLPoint = true; return x += (float)v; }
+		inline float adjustX(const T &v) { return x += (float)v; }
 		template <typename T>
-		inline float adjustY(const T &v) { updateSDLPoint = true; return y += (float)v; }
+		inline float adjustY(const T &v) { return y += (float)v; }
 
 		// operators with a point
-		inline Point2D &operator+=(const Point2D &p) { updateSDLPoint = true; x += p.x; y += p.y; return *this; }
-		inline Point2D &operator-=(const Point2D &p) { updateSDLPoint = true; x -= p.x; y -= p.y; return *this; }
-		inline Point2D &operator*=(const Point2D &p) { updateSDLPoint = true; x *= p.x; y *= p.y; return *this; }
-		inline Point2D &operator/=(const Point2D &p) { updateSDLPoint = true; x /= p.x; y /= p.y; return *this; }
-		inline Point2D &operator%=(const Point2D &p) { updateSDLPoint = true; x = (float)((int)x % (int)p.x); y = (float)((int)y % (int)p.y); return *this; }
+		inline Point2D &operator+=(const Point2D &p) { x += p.x; y += p.y; return *this; }
+		inline Point2D &operator-=(const Point2D &p) { x -= p.x; y -= p.y; return *this; }
+		inline Point2D &operator*=(const Point2D &p) { x *= p.x; y *= p.y; return *this; }
+		inline Point2D &operator/=(const Point2D &p) { x /= p.x; y /= p.y; return *this; }
+		inline Point2D &operator%=(const Point2D &p) { x = (float)((int)x % (int)p.x); y = (float)((int)y % (int)p.y); return *this; }
 		inline Point2D operator*(const Point2D &p) const { return Point2D(x * p.x, y * p.y); }
 		inline Point2D operator/(const Point2D &p) const { return Point2D(x / p.x, y / p.y); }
 		inline Point2D operator+(const Point2D &p) const { return Point2D(x + p.x, y + p.y); }
@@ -118,14 +102,12 @@ namespace Ris
 		template <typename T>
 		inline Point2D& limitX(T min, T max)
 		{
-			updateSDLPoint = true;
 			x = Math::limit(min, max, x);
 			return (*this);
 		}
 		template <typename T>
 		inline Point2D& limitY(T min, T max)
 		{
-			updateSDLPoint = true;
 			y = Math::limit(min, max, y);
 			return (*this);
 		}
@@ -144,7 +126,6 @@ namespace Ris
 		}
 		inline Point2D& limit(const Point2D& min, const Point2D& max)
 		{
-			updateSDLPoint = true;
 			limitX(min.x, max.x);
 			limitY(min.y, max.y);
 			return (*this);
@@ -161,7 +142,6 @@ namespace Ris
 		}
 		inline Point2D &fromRadians(float radians, float length = 1.0)
 		{
-			updateSDLPoint = true;
 			x = (float)(cos(radians) * length);
 			y = (float)(sin(radians) * length);
 			return *this;
@@ -299,12 +279,9 @@ namespace Ris
 		*/
 		const SDL_Point &getSDLRect()
 		{
-			if (updateSDLPoint)
-			{
-				m_point.x = (int)round(x);
-				m_point.y = (int)round(y);
-				updateSDLPoint = false;
-			}
+			m_point.x = (int)round(x);
+			m_point.y = (int)round(y);
+
 			return m_point;
 		}
 	};

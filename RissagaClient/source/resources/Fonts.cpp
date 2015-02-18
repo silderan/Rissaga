@@ -1,6 +1,6 @@
 #include "fonts.h"
-#include "../../../common/string.h"
-#include "../../../common/logging.h"
+#include "common/string.h"
+#include "common/logging.h"
 
 using namespace Ris;
 
@@ -14,7 +14,7 @@ String Fonts::createFontID(const String &fname, int size)
 {
 	return fname + " [" + String(size) + "]";
 }
-FontShared Fonts::getFont(String fname, int size)
+FontShared Fonts::getFont(const String &fname, int size)
 {
 	String fontID = createFontID(fname, size);
 	FontShared f = operator[](fontID);
