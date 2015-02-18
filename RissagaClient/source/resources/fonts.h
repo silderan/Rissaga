@@ -104,8 +104,6 @@ namespace Ris
 	// ToDo: Must be singleton!
 	class Fonts : std::unordered_map<std::string, FontShared>
 	{
-		FontShared emptyFont;
-
 	public:
 		Fonts()
 		{
@@ -114,6 +112,7 @@ namespace Ris
 		}
 		~Fonts()
 		{
+			clear();
 			TTF_Quit();
 		}
 

@@ -31,16 +31,14 @@ TextureShared Textures::getTexture(const String &fname, SDL_Renderer *renderer)
 	if (!f.get())
 	{
 		f = std::make_shared<Texture>();
-		if (f->load(fname, renderer))
+		if (!f->load(fname, renderer))
 		{
-			operator[](fname) = f;
-			return f;
+			// Error, cannot be loaded :/
+			g_log.logErr("Cannot load font file " + fname);
+			erase(fname);
 		}
+		else
+			operator[](fname) = f;
 	}
-	else
-		return f;
-	// Error, cannot be loaded :/
-	g_log.logErr("Cannot load font file " + fname);
-	erase(fname);
-	return emptyTexture;
+	return f;
 }

@@ -28,7 +28,6 @@ namespace Ris
 	// ToDo: Must be singleton!
 	class Textures : std::unordered_map<std::string, TextureShared>
 	{
-		TextureShared emptyTexture;
 
 	public:
 		Textures(int imgFlags = (IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF | IMG_INIT_WEBP))
@@ -38,6 +37,7 @@ namespace Ris
 		}
 		~Textures()
 		{
+			clear();
 			IMG_Quit();
 		}
 
