@@ -22,8 +22,13 @@ FontShared Fonts::getFont(const String &fname, int size)
 	{
 		f = std::make_shared<Font>();
 		if (f->load(fname, size))
+		{
+			operator[](fontID) = f;
 			return f;
+		}
 	}
+	else
+		return f;
 	// Error, cannot be loaded :/
 	g_log.logErr("Cannot load font file " + fname);
 	erase(fontID);

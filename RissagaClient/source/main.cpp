@@ -189,8 +189,14 @@ namespace Ris
 	class Sprite : public Entity
 	{
 		TextureShared m_texture;
+		Rect m_sourceRect;
 
 	public:
+		inline Rect &sourceRect() { return m_sourceRect; }
+		inline const Rect &sourceRect() const { return sourceRect(); }
+		inline Rect &destRect() { return Entity::rect(); }
+		inline const Rect &destRect() const { return destRect(); }
+
 		bool loadTexture(const String &fname)
 		{
 			m_texture = g_Textures.getTexture(fname, getSDLRenderer());
@@ -204,7 +210,7 @@ namespace Ris
 		}
 		void render(CameraShared cam)
 		{
-			SDL_RenderCopy(getSDLRenderer(), m_texture->getSDLTexture(), NULL, NULL);
+			SDL_RenderCopy(getSDLRenderer(), m_texture->getSDLTexture(), &sourceRect().getSDLRect(), &destRect().getSDLRect());
 		}
 	};
 	typedef std::shared_ptr<Sprite> SpriteShared;
@@ -233,8 +239,8 @@ namespace Ris
 		MainWindow() : window(nullptr)
 		{
 		}
-		SDL_Window *getWindow()const { return window; }
-		RendererShared getRenderer() const { return m_renderer; }
+		inline SDL_Window *getWindow()const { return window; }
+		inline RendererShared getRenderer() const { return m_renderer; }
 
 		bool initWindow(const String &winName, int width, int height)
 		{
@@ -283,6 +289,12 @@ int main(int argc, char *argv[])
 	t->setText("HOLA");
 	SpriteShared sprite = std::make_shared<Sprite>(mainWin.getRenderer());
 	sprite->loadTexture("resources/Hero.png");
+	sprite->resize(32, 32);
+	sprite->sourceRect().set(0, 0, 32, 32);
+	SpriteShared sprite2 = std::make_shared<Sprite>(mainWin.getRenderer());
+	sprite2->loadTexture("resources/Hero.png");
+	sprite2->destRect().set(32, 0, 32, 32);
+	sprite2->sourceRect().set(0, 0, 32, 32);
 	//Event handler
 	SDL_Event e;
 	bool quit = false;
@@ -311,7 +323,8 @@ int main(int argc, char *argv[])
 		}
 		frames++;
 		sprite->render(cam);
-//		r->resize(0.01, 0.01);
+		sprite2->render(cam);
+		//		r->resize(0.01, 0.01);
 
 		t->render(cam);
 		//Update screen
