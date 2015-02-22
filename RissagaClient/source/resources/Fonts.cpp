@@ -12,7 +12,7 @@ bool Font::load(const String &fname, int size)
 
 String Fonts::createFontID(const String &fname, int size)
 {
-	return fname + " [" + String(size) + "]";
+	return fname + "#" + String(size);
 }
 FontShared Fonts::getFont(const String &fname, int size)
 {

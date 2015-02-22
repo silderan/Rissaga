@@ -40,6 +40,9 @@
     <ClInclude Include="source\resources\textures.h">
       <Filter>Resources</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\state_machine.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">

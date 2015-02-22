@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\logging.h" />
+    <ClInclude Include="..\common\state_machine.h" />
     <ClInclude Include="..\common\string.h" />
     <ClInclude Include="source\resources\fonts.h" />
     <ClInclude Include="source\resources\textures.h" />

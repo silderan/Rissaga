@@ -5,6 +5,7 @@
 #include "utils/size.h"
 #include "utils/color.h"
 
+#include "common/state_machine.h"
 #include "common/string.h"
 #include "common/logging.h"
 
@@ -58,7 +59,7 @@ namespace Ris
 		template <typename T>
 		inline float moveY(const T &i) { return m_rect.origin().adjustY(i); }
 		template <typename T>
-		inline Point2D &move(const T &x, const T &y) { return m_rect.origin.set(x, y); }
+		inline void move(const T &x, const T &y) { moveX(x); moveY(y); }
 		inline Point2D &move(const Point2D &p) { return m_rect.origin() += p; }
 
 		template <typename T>
@@ -97,6 +98,8 @@ namespace Ris
 		inline const SDL_Renderer *getSDLRenderer() const { return m_renderer->getSDLRenderer(); }
 		inline SDL_Renderer *getSDLRenderer() { return m_renderer->getSDLRenderer(); }
 
+		inline const SDL_Rect *getSDLRect() { return &m_rect.getSDLRect(); }
+
 		inline const RendererShared getRenderer() const { return m_renderer; }
 		inline RendererShared getRenderer() { return m_renderer; }
 
@@ -120,9 +123,9 @@ namespace Ris
 		{
 			SDL_SetRenderDrawColor(getSDLRenderer(), m_clr.getSDLColor().r, m_clr.getSDLColor().g, m_clr.getSDLColor().b, m_clr.getSDLColor().a);
 			if (m_filled)
-				SDL_RenderFillRect(getSDLRenderer(), &rect().getSDLRect());
+				SDL_RenderFillRect(getSDLRenderer(), getSDLRect());
 			else
-				SDL_RenderDrawRect(getSDLRenderer(), &rect().getSDLRect());
+				SDL_RenderDrawRect(getSDLRenderer(), getSDLRect());
 		}
 	};
 	typedef std::shared_ptr<Rectangle> RectangleShared;
@@ -143,8 +146,7 @@ namespace Ris
 		{
 			if (m_texture)
 			{
-				SDL_Rect r = { 200, 200, 100, 100 };
-				SDL_RenderCopy(getSDLRenderer(), m_texture, NULL, &r);
+				SDL_RenderCopy(getSDLRenderer(), m_texture, NULL, getSDLRect());
 			}
 		}
 		bool setText(const String &text)
@@ -193,9 +195,9 @@ namespace Ris
 
 	public:
 		inline Rect &sourceRect() { return m_sourceRect; }
-		inline const Rect &sourceRect() const { return sourceRect(); }
+		inline const Rect &sourceRect() const { return m_sourceRect; }
 		inline Rect &destRect() { return Entity::rect(); }
-		inline const Rect &destRect() const { return destRect(); }
+		inline const Rect &destRect() const { Entity::rect(); }
 
 		bool loadTexture(const String &fname)
 		{
@@ -225,7 +227,25 @@ namespace Ris
 	class AnimedSprite : public Sprite
 	{
 	public:
+		enum MoveFlags
+		{
+			MoveEast  = 0x0,
+			MoveWest  = 0x1,
+			MoveNorth = 0x2,
+			MoveSouth = 0x4,
+			MoveUp    = 0x8,
+			MoveDown  = 0x10
+		};
+	private:
+		MoveFlags moving;
+	public:
+		inline void setMoveFlag(MoveFlags f) { moving |= f; }
+		inline void resetMoveFlag(MoveFlags f) { moving |= f; }
 
+		float subAnimation;
+		Point2D interSpeed;
+		AnimedSprite(RendererShared &r) : Sprite(r), subAnimation(0)
+		{}
 	};
 	typedef std::shared_ptr<AnimedSprite> AnimedSpriteShared;
 
@@ -270,10 +290,64 @@ namespace Ris
 			return true;
 		}
 	};
+	class GameObj
+	{
+		Point2D m_position;
+		String m_name;
+
+	public:
+		Point2D &position() { return m_position; }
+		const Point2D &position() const { return m_position; }
+		String &name() { return m_name; }
+		const String &name() const { return m_name; }
+	};
+
+	class AliveObj : public GameObj
+	{
+		int m_health;
+		int m_mana;
+
+		// Valid States;
+		struct MovementStates
+		{
+			StateStand stateStanding;
+			StateWalking stateWalking;
+		}movementStates;
+
+		State *moveState;
+		inline void newMovementState(State *state, const SDL_KeyboardEvent &key)
+		{
+			moveState->onExit();
+			moveState = state;
+			moveState->onEnter(key);
+		}
+	public:
+		AliveObj() : moveState(&movementStates.stateStanding)
+		{ }
+		void checkKeyboard(const SDL_KeyboardEvent &key)
+		{
+			switch (moveState->checkKeyboard(key))
+			{
+			case State::NoState:
+				break;
+			case State::Walking:
+				newMovementState(&movementStates.stateWalking, key);
+				break;
+			case State::Standing:
+				newMovementState(&movementStates.stateStanding, key);
+				break;
+			}
+		}
+	};
 }
 
 using namespace Ris;
 
+#define TICKS_PER_SECOND(t) (1000/t)
+
+const int tickInterval = TICKS_PER_SECOND(20);
+const int frameInterval = TICKS_PER_SECOND(60);
+const float interInterval = ceil((float)tickInterval / (float)frameInterval);
 
 int main(int argc, char *argv[])
 {
@@ -285,50 +359,99 @@ int main(int argc, char *argv[])
 	RectangleShared r = std::make_shared<Rectangle>(mainWin.getRenderer(), Color(1.0f, 1.0f, 1.0f, 0.5f));
 	r->moveTo(10, 10);
 	r->resizeTo(100, 100);
-	TextShared t = std::make_shared<Text>(mainWin.getRenderer(), Color(1.0f, 1.0f, 1.0f, 0.5f));
-	t->setText("HOLA");
-	SpriteShared sprite = std::make_shared<Sprite>(mainWin.getRenderer());
+	TextShared fpsText = std::make_shared<Text>(mainWin.getRenderer(), Color(1.0f, 1.0f, 1.0f, 0.5f));
+	fpsText->setText("FPS: Calc...");
+	fpsText->moveTo(0, 0);
+	fpsText->resizeTo(100, 20);
+	TextShared tickText = std::make_shared<Text>(mainWin.getRenderer(), Color(1.0f, 1.0f, 1.0f, 0.5f));
+	tickText->setText("Ticks: Calc...");
+	tickText->moveTo(0, 21);
+	tickText->resizeTo(100, 20);
+	AnimedSpriteShared sprite = std::make_shared<AnimedSprite>(mainWin.getRenderer());
 	sprite->loadTexture("resources/Hero.png");
 	sprite->resize(32, 32);
 	sprite->sourceRect().set(0, 0, 32, 32);
-	SpriteShared sprite2 = std::make_shared<Sprite>(mainWin.getRenderer());
+	AliveObj alive1;
+	alive1.position() = sprite->rect().origin();
+	AnimedSpriteShared sprite2 = std::make_shared<AnimedSprite>(mainWin.getRenderer());
 	sprite2->loadTexture("resources/Hero.png");
 	sprite2->destRect().set(32, 0, 32, 32);
 	sprite2->sourceRect().set(0, 0, 32, 32);
 	//Event handler
 	SDL_Event e;
 	bool quit = false;
-	int frames = 0;
-	time_t hora = time(0);
 	//While application is running
+	int curTime;
+	int counterTimer = SDL_GetTicks();
+	int nextTick = counterTimer;
+	int nextFrame = counterTimer;
+	int frames = 0;
+	int ticks = 0;
 	while (!quit)
 	{
-		//Handle events on queue
-		while (SDL_PollEvent(&e) != 0)
+		curTime = SDL_GetTicks();
+		if (nextTick < curTime)
 		{
-			//User requests quit
-			if (e.type == SDL_QUIT)
+			int delta = curTime - nextTick;
+				// Tick skip!!!! :((
+			while (nextTick < curTime)
+				nextTick += tickInterval;
+#ifdef _DEBUG
+			if (sprite->subAnimation)
+				g_log.logWar("At new logic tick, sprite has "+String(sprite->subAnimation) +"animations not done");
+#endif
+			while (SDL_PollEvent(&e) != 0)
 			{
-				quit = true;
+				switch (e.type)
+				{
+				case SDL_QUIT:
+					quit = true;
+					break;
+				case SDL_KEYDOWN:
+				case SDL_KEYUP:
+					alive1.checkKeyboard(e.key);
+					break;
+				}
 			}
+			ticks++;
 		}
-		SDL_SetRenderDrawColor(mainWin.getRenderer()->getSDLRenderer(), 0, 0, 0, 0x0);
-		SDL_RenderClear(mainWin.getRenderer()->getSDLRenderer());
-		r->render(cam);
-		if (hora != time(0))
-		{
-			hora = time(0);
-			t->setText( "fps: " + String(frames) +".");
-			frames = 0;
-		}
-		frames++;
-		sprite->render(cam);
-		sprite2->render(cam);
-		//		r->resize(0.01, 0.01);
 
-		t->render(cam);
-		//Update screen
-		SDL_RenderPresent(mainWin.getRenderer()->getSDLRenderer());
+		if (nextFrame < curTime)
+		{
+			frames++;
+			// Frame skip...
+			while (nextFrame < curTime)
+				nextFrame += frameInterval;
+			if (counterTimer < curTime)
+			{
+				counterTimer += 1000;
+				fpsText->setText("FPS: " + String(frames) + ".");
+				tickText->setText("Ticks: " + String(ticks) + ".");
+				frames = 0;
+				ticks = 0;
+			}
+			if (sprite->subAnimation)
+			{
+				if (sprite->subAnimation)
+				{
+					if (sprite->rect().origin() != alive1.position())
+						sprite->rect().origin() += sprite->interSpeed;
+				}
+				else
+					sprite->rect().origin() = alive1.position();
+				sprite->subAnimation--;
+			}
+			SDL_SetRenderDrawColor(mainWin.getRenderer()->getSDLRenderer(), 0, 0, 0, 0x0);
+			SDL_RenderClear(mainWin.getRenderer()->getSDLRenderer());
+			r->render(cam);
+			sprite->render(cam);
+			sprite2->render(cam);
+			//		r->resize(0.01, 0.01);
+			fpsText->render(cam);
+			tickText->render(cam);
+			//Update screen
+			SDL_RenderPresent(mainWin.getRenderer()->getSDLRenderer());
+		}
 	}
 	return EXIT_SUCCESS;
 	/*	Pointf2D punto(-1.0f, 0.0f);
