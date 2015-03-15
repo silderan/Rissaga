@@ -1,6 +1,6 @@
-#include "RissagaClient/source/utils/math.h"
+#include "utils/math.h"
 
-#include "SDL2/include/SDL_events.h"
+#include "SDL_events.h"
 
 namespace Ris
 {
@@ -27,7 +27,7 @@ namespace Ris
 	{
 		StateOnGround(State::StateID id) : State(id)
 		{ }
-		virtual void onEnter(const SDL_KeyboardEvent &key)
+		virtual void onEnter(const SDL_KeyboardEvent &/*key*/)
 		{
 
 		}
@@ -57,11 +57,8 @@ namespace Ris
 		}
 		virtual void onEnter(const SDL_KeyboardEvent &key)
 		{
-
 		}
 	};
-	class AnimedSprite;
-	class AliveObjects;
 	struct StateWalking : public StateOnGround
 	{
 		enum Direction
@@ -73,8 +70,6 @@ namespace Ris
 			West
 		};
 		Direction direction;
-		AliveObjects *obj;
-		AnimedSprite *spr;
 		void checkKeyboardDown(const SDL_Keycode &key)
 		{
 			switch (key)

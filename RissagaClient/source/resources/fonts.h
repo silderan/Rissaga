@@ -2,11 +2,11 @@
 
 #include <unordered_map>
 #include <memory>
-#include <SDL2/include/SDL_ttf.h>
+#include "SDL_ttf.h"
 
 #include "common/string.h"
 #include "common/logging.h"
-#include "../utils/Size.h"
+#include "utils/Size.h"
 
 namespace Ris
 {

@@ -5,7 +5,7 @@
 
 #include "common/string.h"
 #include "common/logging.h"
-#include "SDL2/include/SDL_image.h"
+#include "SDL_image.h"
 
 namespace Ris
 {

@@ -5,9 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Utils">
-      <UniqueIdentifier>{9605f14f-62d1-44e3-b4c6-c7425b0a195a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resources">
       <UniqueIdentifier>{3668d04f-a3c5-4e45-ad64-06091a499b3e}</UniqueIdentifier>
     </Filter>
@@ -16,33 +13,17 @@
     <ClInclude Include="source\resources\fonts.h">
       <Filter>Resources</Filter>
     </ClInclude>
-    <ClInclude Include="source\Utils\color.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Utils\math.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Utils\point.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Utils\rect.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Utils\size.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\logging.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\string.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="source\resources\textures.h">
       <Filter>Resources</Filter>
     </ClInclude>
     <ClInclude Include="..\common\state_machine.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\utils\color.h" />
+    <ClInclude Include="..\utils\math.h" />
+    <ClInclude Include="..\utils\point.h" />
+    <ClInclude Include="..\utils\rect.h" />
+    <ClInclude Include="..\utils\Size.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">

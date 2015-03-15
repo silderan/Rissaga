@@ -11,15 +11,15 @@ namespace Ris
 	public:
 		// Adds a file to log to.
 		void setFile(String fname);
-		void logErr(String s, bool onFile = false)
+		void logErr(String s, bool /*onFile*/ = false)
 		{
 			std::cerr << "[ERR] " << s << std::endl;
 		}
-		void logLog(String s, bool onFile = false)
+		void logLog(String s, bool /*onFile*/ = false)
 		{
 			std::clog << "[LOG] " << s << std::endl;
 		}
-		void logWar(String s, bool onFile = false)
+		void logWar(String s, bool /*onFile*/ = false)
 		{
 			std::clog << "[WAR] " << s << std::endl;
 		}

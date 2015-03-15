@@ -259,8 +259,8 @@ namespace Ris
 		MainWindow() : window(nullptr)
 		{
 		}
-		inline SDL_Window *getWindow()const { return window; }
-		inline RendererShared getRenderer() const { return m_renderer; }
+		inline SDL_Window *getWindow() const { return window; }
+		inline RendererShared &getRenderer() { return m_renderer; }
 
 		bool initWindow(const String &winName, int width, int height)
 		{
@@ -351,6 +351,8 @@ const float interInterval = ceil((float)tickInterval / (float)frameInterval);
 
 int main(int argc, char *argv[])
 {
+	argc = argc;
+	argv = argv;
 	//The window we'll be rendering to
 	MainWindow mainWin;
 	if (!mainWin.initWindow(GAME_NAME, 800, 600))

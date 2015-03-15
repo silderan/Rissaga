@@ -1,4 +1,5 @@
 #include "fonts.h"
+
 #include "common/string.h"
 #include "common/logging.h"
 
